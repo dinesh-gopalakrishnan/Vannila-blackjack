@@ -4,12 +4,12 @@ let dealerScore = 0;
 let playerCards = [];
 let dealerCards = [];
 let playerCash = 1000;
+let playerBet = 0;
 
 function startGame() {
     loadExternalHTML('game', 'gamestart.html');
     playingDeck = createDeck();
-    console.log(playingDeck);
-    
+
 }
 function deal() {
     if (!isGameActive) {
@@ -18,39 +18,55 @@ function deal() {
         dealerScore = 0;
         playerCards = [];
         dealerCards = [];
+        playerBet = 50;
+        playerCash = playerCash - playerBet;
+
 
         // Initial deal
         playerCards.push(getRandomCard());
         dealerCards.push(getRandomCard());
         playerCards.push(getRandomCard());
         dealerCards.push(getRandomCard());
-        
+
 
         updateScores();
         updatePlayerCards(playerCards);
         document.getElementById('dealerCards').innerHTML += `<div class="card">${dealerCards[0].value} of ${dealerCards[0].suit}</div>`;
-        
-        document.getElementById('msgArea').innerHTML = "Cards left in the deck: " + playingDeck.length;    
-            
+        document.getElementById('msgArea').innerHTML = "Cards left in the deck: " + playingDeck.length;
+        document.getElementById('playerCash').innerText = `Cash: $${playerCash}`;
+        document.getElementById('playerBet').innerText = `Bet: $${playerBet}`;
+        document.getElementById('betYield').innerText = `Bet Yield: $${playerBet * 2}`;
+
     }
     else {
         document.getElementById('msgArea').innerHTML = "Game already in progress. Please hit or stand.";
     }
 }
+function hit() {
+    if (isGameActive) {
+        playerCards.push(getRandomCard());
+        updateScores();
+        updatePlayerCards(playerCards);
+        document.getElementById('msgArea').innerHTML = "Cards left in the deck: " + playingDeck.length;
+    }
+    else {
+        document.getElementById('msgArea').innerHTML = "Please start a new game by clicking Deal.";
+    }
+}
 
 function loadExternalHTML(elementId, filePath) {
     fetch(filePath)
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById(elementId).innerHTML = html;
-      })
-      .catch(error => {
-        console.error('Error loading HTML:', error);
-      });
-  }
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById(elementId).innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading HTML:', error);
+        });
+}
 function createDeck() {
     const suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades'];
-    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];    
+    const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
     let deck = [];
 
     for (let suit of suits) {
@@ -83,7 +99,7 @@ function updateScores() {
 
     document.getElementById('playerScore').innerText = `Score: ${playerScore}`;
     document.getElementById('dealerScore').innerText = `Score: TBD`;
-    
+
 }
 function calculateScore(cards) {
     let score = 0;
@@ -106,6 +122,7 @@ function calculateScore(cards) {
     return score;
 }
 function updatePlayerCards(Cards) {
+    document.getElementById('playerCards').innerHTML = '';
     for (let card of Cards) {
         document.getElementById('playerCards').innerHTML += `<div class="card">${card.value} of ${card.suit}</div>`;
 
