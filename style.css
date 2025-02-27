@@ -28,3 +28,8 @@ button {
     font-style: italic;
     
 }
+#gameArea {
+    display: flex;
+    justify-content: space-evenly;
+    
+}

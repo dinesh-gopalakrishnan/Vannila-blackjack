@@ -10,16 +10,17 @@
     <h1>BlackJack</h1>
     
     <div id="game">
-        <p>
+        <div id='gameArea'>
             <strong>Instructions:</strong> Click the "Start Game" button to begin. 
             The goal is to get as close to 21 as possible without going over. 
             You will be dealt two cards and can choose to "Hit" (draw another card) or "Stand" (end your turn). 
             The dealer will also draw cards according to the rules of Blackjack. Good luck!
-        </p>       
+        </div> 
+        <div id="buttons">
+            <button id="startGame" onclick="startGame()">Start Game</button>
+        </div>      
     </div>
-    <div id="buttons">
-        <button id="startGame" onclick="startGame()">Start Game</button>
-    </div>
+    
     <h6 id="footer">Powered by JavaScript</h6>
     <script src="script.js"></script>
 </body>
