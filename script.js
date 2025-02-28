@@ -3,6 +3,7 @@ let playerScore = 0;
 let dealerScore = 0;
 let playerCards = [];
 let dealerCards = [];
+let discardDeck = [];
 let playerCash = 1000;
 let playerBet = 0;
 
@@ -12,7 +13,7 @@ function startGame() {
 
 }
 function deal() {
-    if (!isGameActive) {
+    if (!isGameActive && playerCash > 0) {
         isGameActive = true;
         playerScore = 0;
         dealerScore = 0;
@@ -20,6 +21,15 @@ function deal() {
         dealerCards = [];
         playerBet = 50;
         playerCash = playerCash - playerBet;
+
+        if (playingDeck.length < 20) {
+            //document.getElementById('debug4').innerHTML = "Deck is low, reshuffling...";
+            // Correct reshuffling:
+            for (let i = 0; i < discardDeck.length; i++) {
+                playingDeck.push(discardDeck[i]);
+            }
+            discardDeck = []; // Clear the discard pile afterwards
+        }
 
 
         // Initial deal
@@ -31,11 +41,19 @@ function deal() {
 
         updateScores();
         updatePlayerCards(playerCards);
-        document.getElementById('dealerCards').innerHTML += `<div class="card">${dealerCards[0].value} of ${dealerCards[0].suit}</div>`;
+        // Show the first card and a facedown for the second
+        document.getElementById('dealerCards').innerHTML = 
+            `<div class="card">${dealerCards[0].value} of ${dealerCards[0].suit}</div>` +
+            `<div class="card">Card Back</div>`; // Placeholder for now
         document.getElementById('msgArea').innerHTML = "Cards left in the deck: " + playingDeck.length;
         document.getElementById('playerCash').innerText = `Cash: $${playerCash}`;
         document.getElementById('playerBet').innerText = `Bet: $${playerBet}`;
         document.getElementById('betYield').innerText = `Bet Yield: $${playerBet * 2}`;
+        //document.getElementById('debug2').innerHTML = "Cards left in the deck after deal: " + playingDeck.length;
+        //document.getElementById('debug').innerHTML = "Discard Deck: " + discardDeck.length;
+        totalCards = playingDeck.length + 4 + discardDeck.length;
+        //document.getElementById('debug3').innerHTML = "Total Cards: " + totalCards;
+        
 
     }
     else {
@@ -48,10 +66,26 @@ function hit() {
         updateScores();
         updatePlayerCards(playerCards);
         document.getElementById('msgArea').innerHTML = "Cards left in the deck: " + playingDeck.length;
+        if (playerScore > 21) {
+            document.getElementById('msgArea').innerHTML = "You busted! Dealer wins.";
+            // Correct Discard:
+            for (let i = 0; i < dealerCards.length; i++){
+                discardDeck.push(dealerCards[i]);
+            }
+            for (let i = 0; i < playerCards.length; i++){
+                discardDeck.push(playerCards[i]);
+            }
+            document.getElementById('betYield').innerText = `Bet Yield: $0`;
+            isGameActive = false;
+            if (playerCash <= 0) {
+                document.getElementById('msgArea').innerHTML += " You are out of cash. Game over.";
+            }
+        }
     }
     else {
         document.getElementById('msgArea').innerHTML = "Please start a new game by clicking Deal.";
     }
+    
 }
 
 function loadExternalHTML(elementId, filePath) {

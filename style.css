@@ -33,3 +33,6 @@ button {
     justify-content: space-evenly;
     
 }
+#troubleshoot {
+    display: none;
+}
