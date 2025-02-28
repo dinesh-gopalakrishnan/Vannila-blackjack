@@ -87,6 +87,49 @@ function hit() {
     }
     
 }
+function stand() {
+    if (isGameActive) {
+        // Reveal dealer's second card
+        document.getElementById('dealerCards').innerHTML = '';
+        for (let card of dealerCards) {
+            document.getElementById('dealerCards').innerHTML += `<div class="card">${card.value} of ${card.suit}</div>`;
+        }
+        updateScores();
+        // Dealer's turn
+        while (dealerScore < 17) {
+            dealerCards.push(getRandomCard());
+            updateScores();
+            document.getElementById('msgArea').innerHTML = "Dealer hits.";
+            updatePlayerCards(playerCards);
+            document.getElementById('dealerCards').innerHTML = '';
+            for (let card of dealerCards) {
+                document.getElementById('dealerCards').innerHTML += `<div class="card">${card.value} of ${card.suit}</div>`;
+            }
+        }
+        if (dealerScore > 21 || playerScore > dealerScore) {
+            document.getElementById('msgArea').innerHTML = "You win!";
+            playerCash += playerBet * 2;
+        } else if (playerScore < dealerScore) {
+            document.getElementById('msgArea').innerHTML = "Dealer wins.";
+        } else {
+            document.getElementById('msgArea').innerHTML = "It's a tie.";
+            playerCash += playerBet;
+        }
+        // Correct Discard:
+        for (let i = 0; i < dealerCards.length; i++){
+            discardDeck.push(dealerCards[i]);
+        }
+        for (let i = 0; i < playerCards.length; i++){
+            discardDeck.push(playerCards[i]);
+        }
+        
+        isGameActive = false;
+        document.getElementById('playerCash').innerText = `Cash: $${playerCash}`;
+    }
+    else {
+        document.getElementById('msgArea').innerHTML = "Please start a new game by clicking Deal.";
+    }
+}
 
 function loadExternalHTML(elementId, filePath) {
     fetch(filePath)
